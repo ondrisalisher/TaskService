@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5433/notes_db
+    url: jdbc:postgresql://localhost:5433/tasker_db
     username: postgres
     password: 0102
   jpa:
@@ -10,10 +10,18 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
 server:
-  port: 8080
+  port: 8082
 
 jwt:
   secret: "084fa456fsf048fw"
   lifetime: 1440m
+
+kafka:
+  notification-topic: "notifications"

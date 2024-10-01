@@ -3,6 +3,7 @@ package com.example.TaskService.utils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,15 +40,15 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String getUsername(String token){
+    public String getUsername(String token) throws SignatureException {
         return getClaims(token).getSubject();
     }
 
-    public List<String> getRoles(String token){
+    public List<String> getRoles(String token) throws SignatureException{
         return getClaims(token).get("roles", List.class);
     }
 
-    private Claims getClaims(String token){
+    private Claims getClaims(String token) throws SignatureException {
         return Jwts.parser()
                 .setSigningKey(secret)
                 .parseClaimsJws(token)

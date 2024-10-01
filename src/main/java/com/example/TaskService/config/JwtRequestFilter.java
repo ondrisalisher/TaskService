@@ -1,6 +1,9 @@
 package com.example.TaskService.config;
 
+import com.example.TaskService.dto.AthorizedUser;
 import com.example.TaskService.utils.JwtUtils;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -25,7 +29,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authHeader = request.getHeader("Authorisation");
+        String authHeader = request.getHeader("Authorization");
         String jwt = null;
         String username = null;
 
@@ -33,12 +37,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             jwt = authHeader.substring(7);
             try {
                 username = jwtUtils.getUsername(jwt);
-            } catch (Exception e) {
-                log.debug("Invalid token: " + e.getMessage());
+                AthorizedUser.username=username;
+            } catch (ExpiredJwtException e) {
+                log.debug("Token is expired: ");
             }
-//            catch (SignatureException e) {
-//                log.debug("Wrong signature");
-//            }
+            catch (SignatureException e) {
+                log.debug("Wrong signature");
+            }
 
             if(SecurityContextHolder.getContext().getAuthentication() == null){
                 UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
@@ -47,8 +52,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                         jwtUtils.getRoles(jwt).stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList())
                 );
                 SecurityContextHolder.getContext().setAuthentication(token);
+
             }
             filterChain.doFilter(request, response);
+        }
+        else {
+            throw new IOException("Invalid jwt");
         }
     }
 }
