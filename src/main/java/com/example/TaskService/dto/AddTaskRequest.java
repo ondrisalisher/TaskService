@@ -1,21 +1,14 @@
 package com.example.TaskService.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class NotificationDto {
+public class AddTaskRequest {
     private String title;
     private String text;
     private Long executioner;
-    private Long creator;
     private Date startsAt;
     private Date deadline;
     private Date remindAt;

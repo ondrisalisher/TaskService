@@ -1,6 +1,6 @@
 package com.example.TaskService.config;
 
-import com.example.TaskService.dto.AthorizedUser;
+import com.example.TaskService.dto.AuthorizedUser;
 import com.example.TaskService.utils.JwtUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -31,13 +30,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
         String jwt = null;
-        String username = null;
+        Long userId = null;
 
         if(authHeader != null && authHeader.startsWith("Bearer ")){
             jwt = authHeader.substring(7);
             try {
-                username = jwtUtils.getUsername(jwt);
-                AthorizedUser.username=username;
+                userId = jwtUtils.getUserId(jwt);
+                AuthorizedUser.setId(userId);
             } catch (ExpiredJwtException e) {
                 log.debug("Token is expired: ");
             }
@@ -47,7 +46,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             if(SecurityContextHolder.getContext().getAuthentication() == null){
                 UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                        username,
+                        userId,
                         null,
                         jwtUtils.getRoles(jwt).stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList())
                 );

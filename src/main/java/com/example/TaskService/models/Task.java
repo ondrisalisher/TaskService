@@ -1,37 +1,42 @@
 package com.example.TaskService.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Data
-
 @Entity
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "executioner_id")
-    User executioner;
+    private User executioner;
 
     @ManyToOne
     @JoinColumn(name = "creator_id")
-    User creator;
+    private User creator;
 
-    String title;
+    private String title;
 
-    String text;
+    private String text;
 
     @Column(name = "startsAt")
-    Date startsAt;
+    private Date startsAt;
 
     @Column(name = "remind_at")
-    Date remindAt;
+    private Date remindAt;
 
-    Date deadline;
+    private Date deadline;
+
+    private boolean isCompleted;
 }

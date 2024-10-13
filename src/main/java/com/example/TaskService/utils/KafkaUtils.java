@@ -30,9 +30,7 @@ public class KafkaUtils {
 
         send.whenComplete((stringObjectSendResult, throwable) ->{
                 if(throwable != null) {
-                    log.info("Message not sent");
-                }else{
-                    log.info("Message sent");
+                    throw new RuntimeException(throwable);
                 }
             }
         );

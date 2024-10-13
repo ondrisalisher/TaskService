@@ -10,6 +10,12 @@ services:
     ports:
       - "5433:5432"
 
+  redis:
+    image: "redis:8.0-M01"
+    container_name: "redis"
+    ports:
+      - "6379:6379"
+
 #  zookeeper:
 #    image: wurstmeister/zookeeper
 #    container_name: zookeeper

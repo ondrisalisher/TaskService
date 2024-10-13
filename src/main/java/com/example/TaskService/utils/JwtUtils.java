@@ -40,8 +40,8 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String getUsername(String token) throws SignatureException {
-        return getClaims(token).getSubject();
+    public Long getUserId(String token) throws SignatureException {
+        return Long.parseLong(getClaims(token).getSubject());
     }
 
     public List<String> getRoles(String token) throws SignatureException{
